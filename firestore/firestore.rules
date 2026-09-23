@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Admin flag: set a custom claim `admin=true` for staff accounts.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    // ---------- App users ----------
+    // users/{userId}
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ---------- Daily content (read-only for students) ----------
+    // dailyContent/{date}
+    match /dailyContent/{date} {
+      allow read: if true;
+      // Publishing handled by admin clients / Cloud Functions.
+      allow write: if isAdmin();
+    }
+
+    // ---------- Per-user participation ----------
+    // participation/{userId}/days/{date}
+    match /participation/{userId}/days/{date} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ---------- Prayer intentions ----------
+    // prayerIntentions/{intentionId}
+    match /prayerIntentions/{intentionId} {
+      allow read: if request.auth != null;
+      // Students create pending intentions (admin sets approved=true later).
+      allow create: if request.auth != null;
+      // Students may only increment prayerCount; moderation is admin-only.
+      allow update: if isAdmin() || (
+        request.auth != null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['prayerCount'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ---------- Daily stats ----------
+    // stats/{date} — maintained by a scheduled Cloud Function.
+    match /stats/{date} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
