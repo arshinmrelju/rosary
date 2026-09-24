@@ -206,6 +206,17 @@ button {
   color: rgba(255, 255, 255, 0.6);
   opacity: 0;
   transition: all 0.6s ease 0.4s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.curtain-jy-logo {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1) opacity(0.85);
 }
 
 .curtain-content.show-text .curtain-title,
@@ -256,8 +267,20 @@ button {
 .brand-lockup {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   text-decoration: none;
+}
+
+.brand-jy-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.brand-lockup:hover .brand-jy-logo {
+  transform: scale(1.05);
 }
 
 .brand-wordmark {
@@ -484,6 +507,19 @@ button {
   text-align: center;
 }
 
+.drawer-org-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.drawer-jy-logo {
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+}
+
 .mobile-drawer-footer .drawer-org {
   font-size: 0.72rem;
   font-weight: 700;
@@ -554,23 +590,6 @@ button {
   color: var(--deep-navy);
 }
 
-/* Mobile Menu Toggle */
-.mobile-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 8px;
-}
-
-.mobile-toggle span {
-  width: 24px;
-  height: 2px;
-  background: var(--primary-blue);
-  border-radius: 2px;
-  transition: all 0.2s ease;
-}
-
 /* Hero Section (Section 16) */
 .hero-section {
   padding: 64px 0 80px;
@@ -620,6 +639,16 @@ button {
   font-weight: 700;
   color: var(--primary-blue);
   letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-jy-logo {
+  height: 18px;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
 }
 
 .hero-title {
@@ -2130,6 +2159,10 @@ button {
     flex-shrink: 0;
   }
 
+  .brand-jy-logo {
+    height: 28px;
+  }
+
   .brand-wordmark {
     font-size: 1.55rem;
     letter-spacing: 0.5px;
@@ -2213,6 +2246,10 @@ button {
     gap: 6px;
   }
 
+  .brand-jy-logo {
+    height: 24px;
+  }
+
   .brand-wordmark {
     font-size: 1.38rem;
   }
@@ -2241,8 +2278,12 @@ button {
     gap: 4px;
   }
 
+  .brand-jy-logo {
+    height: 21px;
+  }
+
   .brand-wordmark {
-    font-size: 1.28rem;
+    font-size: 1.25rem;
   }
 
   .live-pill {

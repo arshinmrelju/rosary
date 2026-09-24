@@ -32,3 +32,4 @@ flutter:
   assets:
     - assets/env/.env
     - assets/yellow svg.svg
+    - assets/jy-logo black.png

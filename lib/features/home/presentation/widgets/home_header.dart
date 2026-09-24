@@ -53,14 +53,26 @@ class HomeHeader extends StatelessWidget {
                         color: AppColors.marianBlueSoft,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(
-                        '${AppConstants.campaignTitle} • ${AppConstants.campusShortName}',
-                        style: const TextStyle(
-                          color: AppColors.marianBlue,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.0,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/jy-logo black.png',
+                            height: 12,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '${AppConstants.campaignTitle} • ${AppConstants.campusShortName}',
+                            style: const TextStyle(
+                              color: AppColors.marianBlue,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
