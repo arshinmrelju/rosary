@@ -5,11 +5,42 @@ import 'package:flutter/foundation.dart';
 /// Keep display strings here so the brand stays consistent and can be
 /// updated from a single place.
 abstract final class AppConstants {
-  static const String appName = 'Rosary Break';
-  static const String tagline = 'Five breaks. Five decades. One Rosary.';
+  /// The official public-facing campaign name: BEAD5.
+  /// Always treated as one complete brand name.
+  static const String appName = 'BEAD5';
 
+  /// Primary campaign tagline.
+  static const String tagline = 'Five Moments. One Journey.';
+
+  /// Secondary explanation tagline.
   static const String secondaryTagline =
-      'Pray one decade during each college break.';
+      'Five moments throughout the college day. Five decades of the Rosary. One journey of prayer.';
+
+  /// Campaign event subtitle.
+  static const String campaignTitle = 'ROSARY MONTH';
+
+  /// Campaign organizer.
+  static const String organizer = 'Jesus Youth — Pazhassiraja College';
+
+  /// Short campus identifier.
+  static const String campusShortName = 'JY PRC';
+
+  /// Technical project identifier.
+  static const String projectId = 'BEAD5JYPRC';
+
+  /// Hosting domain URL.
+  static const String hostingDomain = 'bead5jyprc.web.app';
+
+  /// Core message.
+  static const String coreMessage =
+      "You don't need to stop your whole day for prayer. Give God five moments within it.";
+
+  /// Short campaign message.
+  static const String shortMessage = 'Pause. Pray. Continue the journey.';
+
+  /// Prayer text length bounds enforced in `IntentionRepository.submit`.
+  static const int intentionMinLength = 3;
+  static const int intentionMaxLength = 280;
 
   /// The five decades of one Rosary.
   static const int totalDecades = 5;

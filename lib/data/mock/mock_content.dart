@@ -10,17 +10,32 @@ class MockContent {
     final set = MysterySet.forWeekday(date.weekday);
     final index = date.difference(DateTime(date.year)).inDays;
     final intention = intentions[index % intentions.length];
+    final theme = themes[index % themes.length];
     final reflection = reflections[index % reflections.length];
+    final scripture = set.scriptures.first;
 
     return DailyContent(
       date: dateKey(date),
       mysterySetTitle: set.title,
+      theme: theme,
       intention: intention,
+      scripture: scripture,
       reflection: reflection,
       decades: set.decades,
       published: true,
     );
   }
+
+  static const List<String> themes = <String>[
+    'A quiet yes to God',
+    'Faith in the middle of a busy day',
+    'Companions in prayer',
+    'Trusting God with what we cannot control',
+    'Finding peace in His presence',
+    'The grace of small, faithful moments',
+    'Hope for our community',
+    'Listening before we act',
+  ];
 
   static const List<String> intentions = <String>[
     'For peace in our campus community',

@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "bead5jyprc"
+  },
+  "targets": {
+    "bead5jyprc": {
+      "hosting": {
+        "bead5jyprc": [
+          "bead5jyprc"
+        ]
+      }
+    }
+  }
+}

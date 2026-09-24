@@ -1,47 +1,902 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Five breaks. Five decades. One Rosary. Pray one decade during each college break.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <!-- Primary SEO & Campaign Meta -->
+  <title>BEAD5 — Five Moments. One Journey.</title>
+  <meta name="description" content="BEAD5 is a Rosary Month initiative by Jesus Youth — Pazhassiraja College. Pray one decade during each of the five daily breaks, uniting into one complete Rosary.">
   <meta name="theme-color" content="#1C3D8A">
 
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Rosary Break">
+  <!-- Open Graph / WhatsApp / Social Previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="BEAD5 — Five Moments. One Journey.">
+  <meta property="og:description" content="Five moments throughout the college day. Five decades of the Rosary. One journey of prayer. Rosary Month — Jesus Youth, Pazhassiraja College.">
+  <meta property="og:url" content="https://bead5jyprc.web.app/">
+  <meta property="og:image" content="assets/campus_prayer.jpg">
+
+  <!-- Fonts: Google Fonts (Outfit, Plus Jakarta Sans, Cinzel) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+  <!-- Favicon & PWA -->
+  <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>Rosary Break</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!--
-    You can customize the "flutter_bootstrap.js" script.
-    This is useful to provide a custom configuration to the Flutter loader
-    or to give the user feedback during the initialization process.
 
-    For more details:
-    * https://docs.flutter.dev/platform-integration/web/initialization
-  -->
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- ==========================================
+       SECTION 25: ANIMATED OPENING SEQUENCE
+       ========================================== -->
+  <div id="intro-curtain">
+    <div class="curtain-content">
+      <div class="curtain-beads">
+        <div class="curtain-string"></div>
+        <div class="curtain-bead" id="cbead-1"></div>
+        <div class="curtain-bead" id="cbead-2"></div>
+        <div class="curtain-bead" id="cbead-3"></div>
+        <div class="curtain-bead" id="cbead-4"></div>
+        <div class="curtain-bead" id="cbead-5"></div>
+      </div>
+      <h1 class="curtain-title">BEAD<span>5</span></h1>
+      <p class="curtain-tagline">Five Moments. One Journey.</p>
+      <div class="curtain-organizer">ROSARY MONTH • JESUS YOUTH PAZHASSIRAJA COLLEGE</div>
+    </div>
+    <button class="curtain-skip" id="skip-intro-btn">Skip Intro →</button>
+  </div>
+
+  <!-- ==========================================
+       MAIN NAVIGATION
+       ========================================== -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="brand-lockup">
+        <div class="brand-wordmark">
+          BEAD<span class="num-5">5</span>
+        </div>
+        <div class="brand-meta">
+          <span class="tagline">Five Moments. One Journey.</span>
+          <span class="organizer">JY • Pazhassiraja College</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#hero" class="active">Home</a></li>
+        <li><a href="#live-engine">Live Moment</a></li>
+        <li><a href="#journey-timeline">The 5 Moments</a></li>
+        <li><a href="#campaign-studio">Asset Studio</a></li>
+        <li><a href="#brand-book">Brand Book</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <div class="live-pill" id="nav-live-pill">
+          <span class="live-indicator"></span>
+          <span id="nav-live-text">Moment 1 of 5</span>
+        </div>
+        <button class="btn-primary" onclick="openDecadePrayerModal(1)">
+          <span>Pray Now</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       SECTION 16: WEBSITE HERO
+       ========================================== -->
+  <section class="hero-section" id="hero">
+    <div class="hero-bg-accent"></div>
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-badge-wrap">
+          <span class="campaign-tag">ROSARY MONTH</span>
+          <span class="college-tag">Jesus Youth — Pazhassiraja College</span>
+        </div>
+
+        <h1 class="hero-title">BEAD<span class="brand-five">5</span></h1>
+        <h2 class="hero-tagline">Five Moments. One Journey.</h2>
+
+        <p class="hero-copy">
+          Five moments throughout the college day. Five decades of the Rosary. One journey of prayer.
+        </p>
+
+        <div class="hero-core-quote">
+          <strong>The Core Message</strong>
+          "You don't need to stop your whole day for prayer. Give God five moments within it."
+        </div>
+
+        <div class="hero-cta-group">
+          <a href="#live-engine" class="btn-primary">
+            <span>BEGIN THE JOURNEY</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#journey-timeline" class="btn-secondary">
+            <span>HOW IT WORKS</span>
+          </a>
+        </div>
+
+        <!-- Section 15 Five-Bead System Indicator -->
+        <div class="five-bead-meter">
+          <div class="meter-beads hero-meter-dots">
+            <span class="meter-dot filled"></span>
+            <span class="meter-line"></span>
+            <span class="meter-dot"></span>
+            <span class="meter-line"></span>
+            <span class="meter-dot"></span>
+            <span class="meter-line"></span>
+            <span class="meter-dot"></span>
+            <span class="meter-line"></span>
+            <span class="meter-dot"></span>
+          </div>
+          <span class="meter-label" id="hero-meter-label">YOUR JOURNEY: 1 / 5 Moments</span>
+        </div>
+      </div>
+
+      <!-- Hero Visual Card -->
+      <div class="hero-card">
+        <div class="hero-image-wrap">
+          <img src="assets/campus_prayer.jpg" alt="Pazhassiraja College campus prayer with Rosary beads in natural sunlight">
+          <div class="hero-overlay-pill">
+            <span class="gold-dot"></span>
+            <span>Pause. Pray. Continue the journey.</span>
+          </div>
+        </div>
+        <div class="hero-card-footer">
+          <div class="hero-moment-preview">
+            <span class="label">NEXT DESIGNATED MOMENT</span>
+            <span class="time">11:00 AM</span>
+            <span class="decade">Moment 01 — First Decade</span>
+          </div>
+          <button class="btn-gold" onclick="openDecadePrayerModal(1)">
+            <span>Pray 1st Decade</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECTIONS 18, 19, 20: LIVE MOMENT ENGINE
+       ========================================== -->
+  <section class="live-section" id="live-engine">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-overline">Real-Time Campus Rhythm</span>
+        <h2 class="section-title">The Live Prayer Moment</h2>
+        <p class="section-subtitle">
+          BEAD5 naturally aligns with your breaks. When the moment arrives, pause for just three quiet minutes.
+        </p>
+      </div>
+
+      <div class="live-dashboard-grid">
+        <!-- Smart Living Card -->
+        <div class="smart-card">
+          <div class="smart-header">
+            <div class="smart-status-badge">
+              <span id="smart-moment-overline">NOW • MOMENT 01</span>
+            </div>
+            <div class="smart-countdown" id="smart-countdown-display">
+              <span class="live-indicator"></span> Active Now
+            </div>
+          </div>
+
+          <div class="smart-body">
+            <div class="smart-moment-number">DECADE OF THE ROSARY</div>
+            <h3 class="smart-title" id="smart-moment-title">Pray the First Decade</h3>
+            <p class="smart-message" id="smart-moment-msg">
+              Take a moment. Pray together with Jesus Youth across the college campus.
+            </p>
+          </div>
+
+          <!-- Section 19: Five-Bead Progress System -->
+          <div class="smart-progress-track">
+            <div class="smart-progress-head">
+              <span>YOUR JOURNEY PROGRESS</span>
+              <strong id="smart-completed-count">1 / 5 Moments</strong>
+            </div>
+            <div class="smart-beads-row">
+              <div class="smart-bead-item active" id="node-1">
+                <div class="smart-node">1</div>
+                <span class="smart-node-time">11:00 AM</span>
+              </div>
+              <div class="smart-bead-item" id="node-2">
+                <div class="smart-node">2</div>
+                <span class="smart-node-time">12:05 PM</span>
+              </div>
+              <div class="smart-bead-item" id="node-3">
+                <div class="smart-node">3</div>
+                <span class="smart-node-time">1:00 PM</span>
+              </div>
+              <div class="smart-bead-item" id="node-4">
+                <div class="smart-node">4</div>
+                <span class="smart-node-time">2:00 PM</span>
+              </div>
+              <div class="smart-bead-item" id="node-5">
+                <div class="smart-node">5</div>
+                <span class="smart-node-time">3:00 PM</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="smart-actions">
+            <button class="btn-gold" id="smart-action-btn">
+              <span id="smart-action-label">PRAY FIRST DECADE</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+            <button class="btn-secondary" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); color: #fff;" onclick="shareOnWhatsApp()">
+              <span>Share Moment</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Schedule & Testing Drawer -->
+        <div class="schedule-control-card">
+          <div>
+            <div class="schedule-list-head">
+              <h4>Daily Moment Schedule</h4>
+              <span class="config-btn">Configurable</span>
+            </div>
+
+            <div class="timeline-compact">
+              <div class="timeline-slot current-slot">
+                <div class="slot-left">
+                  <div class="slot-badge">01</div>
+                  <div class="slot-info">
+                    <div class="title">First Decade</div>
+                    <div class="sub">Morning Break</div>
+                  </div>
+                </div>
+                <div class="slot-time">11:00 AM</div>
+              </div>
+
+              <div class="timeline-slot">
+                <div class="slot-left">
+                  <div class="slot-badge">02</div>
+                  <div class="slot-info">
+                    <div class="title">Second Decade</div>
+                    <div class="sub">Midday Break</div>
+                  </div>
+                </div>
+                <div class="slot-time">12:05 PM</div>
+              </div>
+
+              <div class="timeline-slot">
+                <div class="slot-left">
+                  <div class="slot-badge">03</div>
+                  <div class="slot-info">
+                    <div class="title">Third Decade</div>
+                    <div class="sub">Lunch Hour</div>
+                  </div>
+                </div>
+                <div class="slot-time">1:00 PM</div>
+              </div>
+
+              <div class="timeline-slot">
+                <div class="slot-left">
+                  <div class="slot-badge">04</div>
+                  <div class="slot-info">
+                    <div class="title">Fourth Decade</div>
+                    <div class="sub">Afternoon Break</div>
+                  </div>
+                </div>
+                <div class="slot-time">2:00 PM</div>
+              </div>
+
+              <div class="timeline-slot">
+                <div class="slot-left">
+                  <div class="slot-badge">05</div>
+                  <div class="slot-info">
+                    <div class="title">Fifth Decade</div>
+                    <div class="sub">College Day Wrap-up</div>
+                  </div>
+                </div>
+                <div class="slot-time">3:00 PM</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Test / Interactive Simulation Bar -->
+          <div class="simulation-bar">
+            <label>Interactive Moment Simulator (Test Schedule):</label>
+            <div class="sim-btn-group">
+              <button class="sim-btn active" data-sim="real">Real Clock</button>
+              <button class="sim-btn" data-sim="1">11:00 AM</button>
+              <button class="sim-btn" data-sim="2">12:05 PM</button>
+              <button class="sim-btn" data-sim="3">1:00 PM</button>
+              <button class="sim-btn" data-sim="4">2:00 PM</button>
+              <button class="sim-btn" data-sim="5">3:00 PM</button>
+              <button class="sim-btn" data-sim="done" style="background:#EBF1FA;">5/5 Done</button>
+              <button class="sim-btn" data-sim="reset">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECTION 17: THE FIVE MOMENTS JOURNEY
+       ========================================== -->
+  <section class="journey-section" id="journey-timeline">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-overline">One Rosary • One Journey</span>
+        <h2 class="section-title">The Five Prayer Moments</h2>
+        <p class="section-subtitle">
+          Follow the connected path of the Rosary through your college day. Choose today's mysteries:
+        </p>
+      </div>
+
+      <!-- Mystery Selector Chips -->
+      <div class="mystery-selector-wrap">
+        <button class="mystery-chip active" data-mystery="joyful">Joyful (Mon & Sat)</button>
+        <button class="mystery-chip" data-mystery="sorrowful">Sorrowful (Tue & Fri)</button>
+        <button class="mystery-chip" data-mystery="glorious">Glorious (Wed & Sun)</button>
+        <button class="mystery-chip" data-mystery="luminous">Luminous (Thu)</button>
+      </div>
+
+      <!-- Rosary String Connected Timeline -->
+      <div class="rosary-journey-timeline">
+        <!-- Decade 1 -->
+        <div class="journey-step-card" id="step-1">
+          <div class="step-marker">
+            <span class="num">01</span>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <span class="step-time-pill">11:00 AM • MOMENT 01</span>
+            </div>
+            <h4 class="step-title">The Annunciation</h4>
+            <p class="step-scripture">Luke 1:26-38 — "Behold, I am the handmaid of the Lord." • Fruit: Humility</p>
+          </div>
+          <div class="step-actions">
+            <button class="btn-primary" onclick="openDecadePrayerModal(1)">Pray Decade</button>
+          </div>
+        </div>
+
+        <!-- Decade 2 -->
+        <div class="journey-step-card" id="step-2">
+          <div class="step-marker">
+            <span class="num">02</span>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <span class="step-time-pill">12:05 PM • MOMENT 02</span>
+            </div>
+            <h4 class="step-title">The Visitation</h4>
+            <p class="step-scripture">Luke 1:39-56 — "Blessed are you among women." • Fruit: Love of Neighbor</p>
+          </div>
+          <div class="step-actions">
+            <button class="btn-secondary" onclick="openDecadePrayerModal(2)">Pray Decade</button>
+          </div>
+        </div>
+
+        <!-- Decade 3 -->
+        <div class="journey-step-card" id="step-3">
+          <div class="step-marker">
+            <span class="num">03</span>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <span class="step-time-pill">1:00 PM • MOMENT 03</span>
+            </div>
+            <h4 class="step-title">The Nativity</h4>
+            <p class="step-scripture">Luke 2:1-20 — "And she gave birth to her firstborn son." • Fruit: Poverty of Spirit</p>
+          </div>
+          <div class="step-actions">
+            <button class="btn-secondary" onclick="openDecadePrayerModal(3)">Pray Decade</button>
+          </div>
+        </div>
+
+        <!-- Decade 4 -->
+        <div class="journey-step-card" id="step-4">
+          <div class="step-marker">
+            <span class="num">04</span>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <span class="step-time-pill">2:00 PM • MOMENT 04</span>
+            </div>
+            <h4 class="step-title">The Presentation</h4>
+            <p class="step-scripture">Luke 2:22-38 — "My eyes have seen your salvation." • Fruit: Obedience</p>
+          </div>
+          <div class="step-actions">
+            <button class="btn-secondary" onclick="openDecadePrayerModal(4)">Pray Decade</button>
+          </div>
+        </div>
+
+        <!-- Decade 5 -->
+        <div class="journey-step-card" id="step-5">
+          <div class="step-marker">
+            <span class="num">05</span>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <span class="step-time-pill">3:00 PM • MOMENT 05</span>
+            </div>
+            <h4 class="step-title">The Finding in the Temple</h4>
+            <p class="step-scripture">Luke 2:41-52 — "Did you not know that I must be in my Father's house?" • Fruit: Joy in Finding Jesus</p>
+          </div>
+          <div class="step-actions">
+            <button class="btn-secondary" onclick="openDecadePrayerModal(5)">Pray Decade</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECTIONS 21-23, 30: MULTI-CHANNEL CREATIVE STUDIO
+       ========================================== -->
+  <section class="studio-section" id="campaign-studio">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-overline">Complete Campaign Identity Suite</span>
+        <h2 class="section-title">Multi-Channel Asset Studio</h2>
+        <p class="section-subtitle">
+          Consistent, unified BEAD5 brand design across all 11 digital and physical touchpoints for Jesus Youth — Pazhassiraja College.
+        </p>
+      </div>
+
+      <!-- Category Filter Bar -->
+      <div class="studio-filter-bar">
+        <button class="studio-chip active" data-filter="all">All Channels (11)</button>
+        <button class="studio-chip" data-filter="social">Social Media (Instagram & WhatsApp)</button>
+        <button class="studio-chip" data-filter="print">Campus Print & Displays</button>
+        <button class="studio-chip" data-filter="merch">Merchandise & Swag</button>
+        <button class="studio-chip" data-filter="sacred">Prayer Cards & Certificate</button>
+      </div>
+
+      <!-- Studio Grid -->
+      <div class="studio-grid">
+        <!-- 1. Instagram Post -->
+        <div class="creative-card" data-category="social">
+          <div class="creative-preview-area">
+            <div class="insta-post-canvas" id="canvas-insta-post">
+              <div class="insta-header">
+                <span>ROSARY MONTH</span>
+                <span>JY • PRC</span>
+              </div>
+              <div class="insta-center">
+                <div class="brand-logo-text">BEAD<span>5</span></div>
+                <div class="sub-tagline">Five Moments. One Journey.</div>
+                <div class="post-moment-box">
+                  <div style="font-size: 0.65rem; letter-spacing: 1px; color: var(--gold-light);">MOMENT 02 • 12:05 PM</div>
+                  <div style="font-size: 0.85rem; font-weight: 700; margin-top: 2px;">Pause. Pray. Continue.</div>
+                </div>
+              </div>
+              <div class="insta-footer">
+                <span>Take a moment. Pray a decade.</span>
+                <span>bead5jyprc.web.app</span>
+              </div>
+            </div>
+          </div>
+          <div class="creative-info-area">
+            <div class="creative-meta-row">
+              <span class="creative-format-badge">Instagram Post</span>
+              <span class="creative-dimens">1080 × 1080 px (1:1)</span>
+            </div>
+            <h4 class="creative-title">Daily Moment Reminder Post</h4>
+            <p class="creative-desc">Official template for daily prayer moments, mystery reflections, and launch announcements.</p>
+            <div class="creative-actions">
+              <button class="btn-primary" onclick="downloadCreativeSVG('canvas-insta-post', 'BEAD5_Instagram_Post')">Export SVG</button>
+              <button class="btn-secondary" onclick="shareOnWhatsApp()">Share Link</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Instagram Story / WhatsApp Status -->
+        <div class="creative-card" data-category="social">
+          <div class="creative-preview-area">
+            <div class="insta-story-canvas" id="canvas-insta-story">
+              <div class="insta-header">
+                <span>BEAD5</span>
+                <span>JYPRC</span>
+              </div>
+              <div style="text-align: center; margin: auto 0;">
+                <div style="font-size: 0.72rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase;">TODAY'S RHYTHM</div>
+                <div style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 900; line-height: 1.1; margin: 8px 0;">BEAD<span style="color:var(--gold);">5</span></div>
+                <div style="font-size: 0.85rem; font-style: italic; color: #FFF; margin-bottom: 14px;">Five Moments.<br>One Journey.</div>
+                
+                <div class="story-beads">
+                  <span class="active"></span>
+                  <span class="active"></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.12); padding: 8px; border-radius: 8px; font-size: 0.72rem; margin-top: 14px;">
+                  11:00 • 12:05 • 1:00 • 2:00 • 3:00
+                </div>
+              </div>
+              <div style="text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.7);">
+                Swipe up or tap to pray
+              </div>
+            </div>
+          </div>
+          <div class="creative-info-area">
+            <div class="creative-meta-row">
+              <span class="creative-format-badge">Story & Status</span>
+              <span class="creative-dimens">1080 × 1920 px (9:16)</span>
+            </div>
+            <h4 class="creative-title">Vertical Story & Countdown</h4>
+            <p class="creative-desc">Tailored for student smartphones, WhatsApp status broadcasts, and Instagram story countdowns.</p>
+            <div class="creative-actions">
+              <button class="btn-primary" onclick="downloadCreativeSVG('canvas-insta-story', 'BEAD5_Story_Status')">Export SVG</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Campus Notice Board Poster (A3) -->
+        <div class="creative-card" data-category="print">
+          <div class="creative-preview-area">
+            <div class="campus-poster-canvas" id="canvas-poster">
+              <div class="poster-border"></div>
+              <div class="poster-head">
+                <div class="p-org">JESUS YOUTH • PAZHASSIRAJA COLLEGE</div>
+                <div class="p-title">BEAD<span>5</span></div>
+                <div style="font-size: 0.75rem; font-style: italic; color: var(--gold-dark); font-weight: 600;">Five Moments. One Journey.</div>
+                <div style="font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px;">ROSARY MONTH CAMPAIGN</div>
+              </div>
+              <div class="poster-schedule">
+                <div class="poster-row"><span>01 First Decade</span><strong>11:00 AM</strong></div>
+                <div class="poster-row"><span>02 Second Decade</span><strong>12:05 PM</strong></div>
+                <div class="poster-row"><span>03 Third Decade</span><strong>1:00 PM</strong></div>
+                <div class="poster-row"><span>04 Fourth Decade</span><strong>2:00 PM</strong></div>
+                <div class="poster-row"><span>05 Fifth Decade</span><strong>3:00 PM</strong></div>
+              </div>
+              <div style="text-align: center; font-size: 0.6rem; color: var(--primary-blue-dark); font-weight: 600;">
+                "Give God five moments within your day."<br>
+                <span style="color: var(--ink-soft);">bead5jyprc.web.app</span>
+              </div>
+            </div>
+          </div>
+          <div class="creative-info-area">
+            <div class="creative-meta-row">
+              <span class="creative-format-badge">Campus Print</span>
+              <span class="creative-dimens">A3 / Vertical Print</span>
+            </div>
+            <h4 class="creative-title">Campus Notice Board Poster</h4>
+            <p class="creative-desc">Clean, high-legibility print poster for college bulletin boards, chapel entrance, and canteen.</p>
+            <div class="creative-actions">
+              <button class="btn-primary" onclick="downloadCreativeSVG('canvas-poster', 'BEAD5_Campus_Poster_A3')">Export SVG</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Die-cut Stickers -->
+        <div class="creative-card" data-category="merch">
+          <div class="creative-preview-area">
+            <div class="sticker-preview" id="canvas-sticker">
+              <div class="sticker-inner">
+                <div style="font-size: 0.58rem; letter-spacing: 1px; color: var(--gold-light);">JESUS YOUTH</div>
+                <div style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 900; line-height: 1;">BEAD<span style="color:var(--gold);">5</span></div>
+                <div style="font-size: 0.6rem; font-style: italic; color: #FFF; margin: 2px 0;">Five Moments</div>
+                <div style="font-size: 0.55rem; color: var(--gold-light);">PRC</div>
+              </div>
+            </div>
+          </div>
+          <div class="creative-info-area">
+            <div class="creative-meta-row">
+              <span class="creative-format-badge">Merch / Swag</span>
+              <span class="creative-dimens">3 × 3 in Circular Sticker</span>
+            </div>
+            <h4 class="creative-title">Die-Cut Laptop & Flask Sticker</h4>
+            <p class="creative-desc">Modern youth movement sticker for student notebooks, phone covers, and water bottles.</p>
+            <div class="creative-actions">
+              <button class="btn-primary" onclick="downloadCreativeSVG('canvas-sticker', 'BEAD5_Sticker_DieCut')">Export SVG</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Campaign T-Shirt -->
+        <div class="creative-card" data-category="merch">
+          <div class="creative-preview-area">
+            <div class="tshirt-mockup" id="canvas-tshirt">
+              <div class="tshirt-graphic">
+                <div style="font-size: 0.6rem; letter-spacing: 1px; color: var(--primary-blue); font-weight: 800;">FRONT POCKET LOCKUP</div>
+                <div style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--primary-blue);">BEAD<span style="color:var(--gold);">5</span></div>
+                <div style="font-size: 0.6rem; font-style: italic; color: var(--ink-soft);">Five Moments. One Journey.</div>
+                <div style="font-size: 0.52rem; letter-spacing: 1px; color: var(--gold-dark); margin-top: 4px;">JY • PAZHASSIRAJA COLLEGE</div>
+              </div>
+            </div>
+          </div>
+          <div class="creative-info-area">
+            <div class="creative-meta-row">
+              <span class="creative-format-badge">Apparel</span>
+              <span class="creative-dimens">Screen-print Vector</span>
+            </div>
+            <h4 class="creative-title">Campaign Volunteer T-Shirt</h4>
+            <p class="creative-desc">Subtle chest pocket mark + optional full back journey Rosary string schematic.</p>
+            <div class="creative-actions">
+              <button class="btn-primary" onclick="downloadCreativeSVG('canvas-tshirt', 'BEAD5_TShirt_Vector')">Export SVG</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Completion Certificate (Section 20) -->
+        <div class="creative-card" data-category="sacred">
+          <div class="creative-preview-area">
+            <div class="cert-canvas" id="canvas-cert">
+              <div class="cert-border"></div>
+              <div>
+                <div style="font-size: 0.55rem; letter-spacing: 1.5px; color: var(--gold-dark); font-weight: 800;">JESUS YOUTH — PAZHASSIRAJA COLLEGE</div>
+                <div class="cert-title">Certificate of Completion</div>
+              </div>
+              <div>
+                <div style="font-size: 0.62rem; color: var(--ink-soft);">This certifies that</div>
+                <div class="cert-name" id="cert-student-name-display">Mary Student</div>
+                <div class="cert-sub">faithfully completed the five daily prayer moments of BEAD5 during Rosary Month.</div>
+              </div>
+              <div class="cert-footer">
+                <div><span>Five Decades. One Rosary.</span></div>
+                <div style="font-weight: 700; color: var(--primary-blue);">JY Campus Animator</div>
+              </div>
+            </div>
+          </div>
+          <div class="creative-info-area">
+            <div class="creative-meta-row">
+              <span class="creative-format-badge">Certificate</span>
+              <span class="creative-dimens">A4 / A5 Print Format</span>
+            </div>
+            <h4 class="creative-title">Participation & Completion Certificate</h4>
+            <p class="creative-desc">Official signed certificate honoring participants who finish the five Rosary Month moments.</p>
+            <div class="creative-actions">
+              <button class="btn-primary" onclick="openCertificateModal()">Customize & Print</button>
+              <button class="btn-secondary" onclick="downloadCreativeSVG('canvas-cert', 'BEAD5_Certificate')">Export SVG</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SECTION 01-15, 28: MASTER BRAND BOOK
+       ========================================== -->
+  <section class="guidelines-section" id="brand-book">
+    <div class="container">
+      <div class="section-head">
+        <span class="section-overline">Identity Standards & Visual System</span>
+        <h2 class="section-title">The BEAD5 Brand Book</h2>
+        <p class="section-subtitle">
+          Core principles governing typography, Marian color harmonies, and brand representation.
+        </p>
+      </div>
+
+      <!-- Color Palette Grid -->
+      <h3 style="font-size: 1.4rem; color: var(--primary-blue); margin-bottom: 8px;">Marian Color System</h3>
+      <p style="font-size: 0.92rem; color: var(--ink-soft);">Click any swatch to copy its HEX code.</p>
+
+      <div class="palette-grid">
+        <div class="palette-swatch" onclick="copyColorHex('#1C3D8A', 'Marian Blue')">
+          <div class="swatch-color" style="background: #1C3D8A;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Marian Blue (Primary)</div>
+            <div class="swatch-hex">#1C3D8A</div>
+          </div>
+        </div>
+
+        <div class="palette-swatch" onclick="copyColorHex('#FAF7F0', 'Warm Ivory')">
+          <div class="swatch-color" style="background: #FAF7F0; border-bottom: 1px solid #EBE4D5;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Warm Ivory (Secondary)</div>
+            <div class="swatch-hex">#FAF7F0</div>
+          </div>
+        </div>
+
+        <div class="palette-swatch" onclick="copyColorHex('#C9A24B', 'Soft Gold')">
+          <div class="swatch-color" style="background: #C9A24B;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Soft Gold (Accent)</div>
+            <div class="swatch-hex">#C9A24B</div>
+          </div>
+        </div>
+
+        <div class="palette-swatch" onclick="copyColorHex('#0D1B2A', 'Deep Navy')">
+          <div class="swatch-color" style="background: #0D1B2A;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Deep Navy (Supporting)</div>
+            <div class="swatch-hex">#0D1B2A</div>
+          </div>
+        </div>
+
+        <div class="palette-swatch" onclick="copyColorHex('#C88D8E', 'Muted Rose')">
+          <div class="swatch-color" style="background: #C88D8E;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Muted Rose (Supporting)</div>
+            <div class="swatch-hex">#C88D8E</div>
+          </div>
+        </div>
+
+        <div class="palette-swatch" onclick="copyColorHex('#7CA5D8', 'Soft Sky Blue')">
+          <div class="swatch-color" style="background: #7CA5D8;"></div>
+          <div class="swatch-info">
+            <div class="swatch-name">Soft Sky Blue (Supporting)</div>
+            <div class="swatch-hex">#7CA5D8</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 28: Brand Rules Grid -->
+      <div class="rules-grid">
+        <div class="rule-box always">
+          <h4 style="color: #2E7D5B; font-size: 1.25rem;">ALWAYS (Brand Rules)</h4>
+          <ul class="rule-list always">
+            <li>Use <strong>BEAD5</strong> as one unified campaign name.</li>
+            <li>Use <em>"Five Moments. One Journey."</em> as the primary tagline.</li>
+            <li>Identify <strong>Jesus Youth — Pazhassiraja College</strong> as the organizer.</li>
+            <li>Integrate the number 5 naturally into the wordmark.</li>
+            <li>Maintain clean, modern, youthful, and minimal aesthetics.</li>
+          </ul>
+        </div>
+
+        <div class="rule-box never">
+          <h4 style="color: #B3261E; font-size: 1.25rem;">NEVER (Brand Rules)</h4>
+          <ul class="rule-list never">
+            <li>Never separate BEAD and 5 into two independent symbols.</li>
+            <li>Never replace BEAD5 with "Bead Five".</li>
+            <li>Never use neon or aggressive decorative religious fonts.</li>
+            <li>Never make the design look like a generic church program announcement.</li>
+            <li>Never display the technical domain BEAD5JYPRC as the primary logo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FOOTER
+       ========================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3>BEAD<span>5</span></h3>
+          <p>Five Moments. One Journey. A campus Rosary Month initiative organized by Jesus Youth — Pazhassiraja College.</p>
+          <div style="font-size: 0.85rem; color: var(--gold-light);">
+            Hosting: <strong>bead5jyprc.web.app</strong>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Five Moments</h5>
+          <ul>
+            <li><a href="#journey-timeline">11:00 AM — First Decade</a></li>
+            <li><a href="#journey-timeline">12:05 PM — Second Decade</a></li>
+            <li><a href="#journey-timeline">1:00 PM — Third Decade</a></li>
+            <li><a href="#journey-timeline">2:00 PM — Fourth Decade</a></li>
+            <li><a href="#journey-timeline">3:00 PM — Fifth Decade</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Campaign Tools</h5>
+          <ul>
+            <li><a href="#campaign-studio">Asset Studio & Exports</a></li>
+            <li><a href="#brand-book">Brand Book & Palette</a></li>
+            <li><a href="#live-engine">Live Moment Engine</a></li>
+            <li><a href="javascript:void(0)" onclick="openCertificateModal()">Generate Certificate</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Jesus Youth — Pazhassiraja College. All Rights Reserved.</div>
+        <div>Technical Identifier: <code>BEAD5JYPRC</code></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       MODAL: GUIDED DECADE PRAYER
+       ========================================== -->
+  <div class="modal-overlay" id="prayer-modal">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <div>
+          <span style="font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-dark); font-weight: 800;" id="modal-decade-title">Moment 01 — Decade 1</span>
+          <h3 style="font-size: 1.6rem; color: var(--primary-blue);" id="modal-mystery-name">The Annunciation</h3>
+          <p style="font-size: 0.85rem; color: var(--ink-soft);" id="modal-fruit">Fruit of the Mystery: Humility</p>
+        </div>
+        <button class="modal-close" onclick="closePrayerModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="prayer-box">
+          <h5>Scripture Meditation</h5>
+          <p id="modal-scripture">"Behold, I am the handmaid of the Lord; let it be to me according to your word." (Luke 1:38)</p>
+        </div>
+
+        <div class="prayer-box">
+          <h5>Our Father</h5>
+          <p>Our Father, who art in heaven, hallowed be thy name; thy kingdom come; thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.</p>
+        </div>
+
+        <!-- 10 Interactive Hail Mary Beads -->
+        <div class="interactive-decade-counter">
+          <div style="font-size: 0.8rem; font-weight: 800; color: var(--primary-blue); text-transform: uppercase; letter-spacing: 1px;">
+            Tap beads as you pray 10 Hail Marys:
+          </div>
+          <div class="beads-ring" id="modal-beads-container"></div>
+          <div style="font-size: 0.88rem; font-weight: 700; color: var(--primary-blue-dark);" id="modal-bead-counter">
+            0 / 10 Hail Marys
+          </div>
+        </div>
+
+        <div class="prayer-box">
+          <h5>Glory Be & Fatima Prayer</h5>
+          <p style="margin-bottom: 8px;">Glory be to the Father, and to the Son, and to the Holy Spirit. As it was in the beginning, is now, and ever shall be, world without end. Amen.</p>
+          <p style="font-style: italic;">"O My Jesus, forgive us our sins, save us from the fires of hell, lead all souls to Heaven, especially those most in need of Thy mercy."</p>
+        </div>
+
+        <button class="btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="completeActiveDecade()">
+          <span>Mark Decade Complete</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL: JOURNEY COMPLETE CELEBRATION (Section 20)
+       ========================================== -->
+  <div class="modal-overlay" id="completion-modal">
+    <div class="modal-sheet" style="max-width: 520px; text-align: center;">
+      <div class="modal-body" style="padding: 40px 32px;">
+        <div class="completion-badge">🌹</div>
+        <span style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dark); font-weight: 800;">SECTION 20 COMPLETION</span>
+        <h2 style="font-size: 2.2rem; color: var(--primary-blue); margin: 8px 0 14px;">JOURNEY COMPLETE</h2>
+        <p style="font-size: 1.1rem; font-weight: 600; color: var(--primary-blue-dark);">You completed the five moments.</p>
+
+        <div style="margin: 24px 0; padding: 20px; background: var(--warm-ivory); border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+          <div style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--primary-blue);">BEAD<span style="color:var(--gold);">5</span></div>
+          <div style="font-style: italic; font-size: 0.95rem; color: var(--primary-blue-dark); margin-top: 2px;">Five Moments. One Journey.</div>
+          <div style="font-size: 0.85rem; color: var(--ink-soft); margin-top: 10px;">
+            Five decades.<br>
+            One Rosary.<br>
+            One journey of prayer.
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button class="btn-primary" onclick="closeCompletionModal(); openCertificateModal();">Get Your Certificate</button>
+          <button class="btn-secondary" onclick="closeCompletionModal()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAL: CERTIFICATE OF COMPLETION
+       ========================================== -->
+  <div class="modal-overlay" id="certificate-modal">
+    <div class="modal-sheet" style="max-width: 600px;">
+      <div class="modal-header">
+        <h4>Personalize Your Certificate</h4>
+        <button class="modal-close" onclick="closeCertificateModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label style="font-size: 0.85rem; font-weight: 700; color: var(--primary-blue);">Enter Participant Name:</label>
+        <input type="text" id="cert-student-name-input" value="Mary Student" style="padding: 12px; border: 1.5px solid var(--border-light); border-radius: var(--radius-sm); font-size: 1rem; width: 100%;">
+        
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <button class="btn-primary" onclick="window.print()">Print Certificate</button>
+          <button class="btn-secondary" onclick="downloadCreativeSVG('canvas-cert', 'BEAD5_Official_Certificate')">Download SVG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
 </body>
 </html>

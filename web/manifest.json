@@ -1,11 +1,11 @@
 {
-    "name": "Rosary Break",
-    "short_name": "Rosary Break",
+    "name": "BEAD5 — Five Moments. One Journey.",
+    "short_name": "BEAD5",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#F6F7FB",
+    "background_color": "#FAF7F0",
     "theme_color": "#1C3D8A",
-    "description": "Five breaks. Five decades. One Rosary. Pray one decade during each college break.",
+    "description": "Five moments throughout the college day. Five decades of the Rosary. One journey of prayer. Rosary Month — Jesus Youth, Pazhassiraja College.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

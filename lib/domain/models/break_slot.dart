@@ -13,6 +13,7 @@ class BreakSlot {
     required this.decadeNumber,
     required this.title,
     this.isCompleted = false,
+    this.activeWindow = defaultActiveWindow,
   });
 
   /// 1-based break number (Break 1 … Break 5).
@@ -30,8 +31,19 @@ class BreakSlot {
   /// Whether the current user completed the decade for this break.
   final bool isCompleted;
 
-  /// Date-time on [day] when this break happens.
+  /// How long a break counts as "happening now". A short window: the break is
+  /// a moment in the day, not a restriction. Once the window closes the
+  /// decade can still be prayed any time. Configured from one place
+  /// (`DefaultBreakScheduleSource`) so it can move to Firebase later.
+  static const Duration defaultActiveWindow = Duration(minutes: 3);
+
+  final Duration activeWindow;
+
+  /// Date-time on [day] when this break starts.
   DateTime on(DateTime day) => time.at(day);
+
+  /// Date-time on [day] when this break's window closes.
+  DateTime endOn(DateTime day) => on(day).add(activeWindow);
 
   /// Status of this break at [now] with the given completion state.
   BreakStatus statusAt(DateTime now, {required bool completed}) {
@@ -39,11 +51,8 @@ class BreakSlot {
 
     final start = time.at(now);
     if (now.isBefore(start)) return BreakStatus.upcoming;
-
-    // The break is "active" during and up to one hour after its start
-    // (covers the whole break window before the next one begins).
-    final windowEnd = start.add(const Duration(minutes: 60));
-    if (!now.isAfter(windowEnd)) return BreakStatus.active;
+    // Active = half-open window [start, start + activeWindow).
+    if (now.isBefore(start.add(activeWindow))) return BreakStatus.active;
 
     return BreakStatus.missed;
   }
@@ -55,6 +64,7 @@ class BreakSlot {
         decadeNumber: decadeNumber,
         title: title,
         isCompleted: completed,
+        activeWindow: activeWindow,
       );
 
   @override

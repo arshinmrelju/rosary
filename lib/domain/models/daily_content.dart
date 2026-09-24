@@ -8,6 +8,8 @@ class DailyContent {
     required this.date,
     required this.mysterySetTitle,
     required this.intention,
+    this.theme,
+    this.scripture,
     this.reflection,
     this.decades = const <Decade>[],
     this.published = true,
@@ -21,6 +23,12 @@ class DailyContent {
 
   /// Today's prayer intention, e.g. "For peace in our community".
   final String intention;
+
+  /// One-line theme framing the day, e.g. "Saying yes to God".
+  final String? theme;
+
+  /// Optional top-level scripture for the day (groups the mystery set).
+  final String? scripture;
 
   /// Optional short reflection shared with all students.
   final String? reflection;
@@ -39,10 +47,14 @@ class DailyContent {
 
   factory DailyContent.fromMap(Map<String, dynamic> map) {
     final rawDecades = map['decades'] as List? ?? const <dynamic>[];
+    // Accept both `mysteryType` (current) and `mystery` (initial seed) keys.
+    final mysteryType = map['mysteryType'] as String? ?? map['mystery'] as String?;
     return DailyContent(
       date: map['date'] as String? ?? '',
-      mysterySetTitle: map['mystery'] as String? ?? 'Rosary Mysteries',
+      mysterySetTitle: mysteryType ?? 'Rosary Mysteries',
       intention: map['intention'] as String? ?? '',
+      theme: map['theme'] as String?,
+      scripture: map['scripture'] as String?,
       reflection: map['reflection'] as String?,
       published: map['published'] as bool? ?? true,
       decades: <Decade>[
@@ -58,8 +70,10 @@ class DailyContent {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
     'date': date,
-    'mystery': mysterySetTitle,
+    'mysteryType': mysterySetTitle,
     'intention': intention,
+    if (theme != null) 'theme': theme,
+    if (scripture != null) 'scripture': scripture,
     if (reflection != null) 'reflection': reflection,
     'decades': <Map<String, dynamic>>[
       for (final d in decades) d.toMap(),

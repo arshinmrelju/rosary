@@ -42,8 +42,26 @@ class DecadeController extends ChangeNotifier {
     final content = _content;
     final mysteryTitle = content?.decade(decadeNumber).mysteryTitle ?? 'Decade $decadeNumber';
     final focus = content?.decade(decadeNumber).focus;
-    return Decade(number: decadeNumber, mysteryTitle: mysteryTitle, focus: focus);
+    final scripture = content?.decade(decadeNumber).scripture;
+    final reflection = content?.decade(decadeNumber).reflection;
+    return Decade(
+      number: decadeNumber,
+      mysteryTitle: mysteryTitle,
+      focus: focus,
+      scripture: scripture,
+      reflection: reflection,
+    );
   }
+
+  /// Today's mystery set title, or a fallback when content is missing.
+  String get mysterySetTitle =>
+      _content?.mysterySetTitle ?? 'Rosary Mysteries';
+
+  /// Today's intention (may be empty when content is unpublished).
+  String get intention => _content?.intention ?? '';
+
+  /// Number of decades completed today (for the completion summary).
+  int get completedCount => _participation?.totalCompleted ?? 0;
 
   bool get isCompleted =>
       _participation?.isDecadeCompleted(decadeNumber) ?? false;

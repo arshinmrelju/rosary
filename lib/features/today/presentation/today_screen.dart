@@ -10,6 +10,10 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_content_frame.dart';
 import '../../../core/widgets/app_state_views.dart';
+import '../../../core/widgets/decade_dots.dart';
+import '../../../core/widgets/offline_banner.dart';
+import '../../../domain/models/rosary_break.dart';
+import '../../../domain/schedule/break_day_state.dart';
 import 'today_controller.dart';
 import 'widgets/break_schedule_list.dart';
 
@@ -58,6 +62,8 @@ class _TodayScreenState extends State<TodayScreen> {
           return AppErrorView(message: c.error!, onRetry: c.load);
         }
 
+        final mystery = c.content?.mysterySetTitle ?? 'Rosary Mysteries';
+
         return SafeArea(
           child: AppContentFrame(
             child: RefreshIndicator(
@@ -66,33 +72,61 @@ class _TodayScreenState extends State<TodayScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: <Widget>[
                   Text(
-                    'Today\'s Rosary',
+                    "Today's Rosary",
                     style: context.textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     friendlyDate(c.now),
                     style: context.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.inkSoft,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-
-                  _OverviewCard(controller: c),
-                  const SizedBox(height: AppSpacing.xl),
-
-                  _SectionTitle(
-                    title: 'Your five breaks',
-                    subtitle: 'One decade per break — five breaks, one Rosary.',
                   ),
                   const SizedBox(height: AppSpacing.md),
 
-                  if (c.schedule != null)
-                    BreakScheduleList(
-                      slots: c.schedule!.slots,
-                      now: c.now,
-                      onOpen: _openDecade,
+                  OfflineBanner(offline: c.isOffline),
+                  if (c.isOffline) const SizedBox(height: AppSpacing.md),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  _OverviewCard(
+                    mystery: mystery,
+                    intention: c.content?.intention ?? '',
+                    completedCount: c.completedCount,
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  if (c.campaignPaused) ...<Widget>[
+                    const _PausedMessageCard(),
+                    const SizedBox(height: AppSpacing.xxl),
+                  ] else ...<Widget>[
+                    _TodayHeading(
+                      completedCount: c.completedCount,
+                      state: c.dayState,
                     ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    if (c.schedule != null)
+                      BreakScheduleList(
+                        slots: c.schedule!.slots,
+                        now: c.now,
+                        dayState: c.dayState,
+                        onOpen: _openDecade,
+                      ),
+
+                    if (c.dayEnded && c.remainingCount > 0) ...<Widget>[
+                      const SizedBox(height: AppSpacing.xl),
+                      _CatchUpCard(
+                        remaining: c.remainingCount,
+                        breaks: c.breaks,
+                        onCompleteDecade: _openDecade,
+                      ),
+                    ],
+
+                    if (c.dayState?.allCompleted ?? false) ...<Widget>[
+                      const SizedBox(height: AppSpacing.xl),
+                      const _JourneyFooter(),
+                    ],
+                  ],
                   const SizedBox(height: AppSpacing.xxl),
                 ],
               ),
@@ -104,55 +138,38 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 }
 
-class _OverviewCard extends StatelessWidget {
-  const _OverviewCard({required this.controller});
-
-  final TodayController controller;
+/// Shown when organizers pause the campaign: a calm note instead of pushing
+/// the five breaks.
+class _PausedMessageCard extends StatelessWidget {
+  const _PausedMessageCard();
 
   @override
   Widget build(BuildContext context) {
-    final c = controller;
-    final mystery = c.content?.mysterySetTitle ?? 'Rosary Mysteries';
-    final intention = c.content?.intention ?? '';
-
     return AppCard(
-      color: AppColors.marianBlueSoft.withValues(alpha: 0.5),
+      color: AppColors.goldSoft.withValues(alpha: 0.5),
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'TODAY',
+            'A LITTLE PAUSE',
             style: context.textTheme.labelSmall?.copyWith(
               color: AppColors.goldDark,
               letterSpacing: 1.4,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(mystery, style: context.textTheme.titleLarge),
+          Text(
+            'The campaign is resting today.',
+            style: context.textTheme.titleLarge,
+          ),
           const SizedBox(height: AppSpacing.sm),
-          if (intention.trim().isNotEmpty)
-            Text(
-              intention,
-              style: context.textTheme.bodyMedium?.copyWith(
-                color: AppColors.inkSoft,
-              ),
+          Text(
+            'Your Rosary is still yours — come back when the campaign '
+            'resumes. We are glad you are here.',
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-          const SizedBox(height: AppSpacing.lg),
-          Row(
-            children: <Widget>[
-              Icon(
-                Icons.self_improvement,
-                size: 18,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${c.completedCount} / 5 decades completed',
-                style: context.textTheme.labelMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ],
           ),
         ],
       ),
@@ -160,22 +177,189 @@ class _OverviewCard extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title, required this.subtitle});
+/// Hero summary: today's mystery, dots and "n / 5 completed".
+class _OverviewCard extends StatelessWidget {
+  const _OverviewCard({
+    required this.mystery,
+    required this.intention,
+    required this.completedCount,
+  });
 
-  final String title;
-  final String subtitle;
+  final String mystery;
+  final String intention;
+  final int completedCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      color: AppColors.marianBlueSoft.withValues(alpha: 0.5),
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  'TODAY',
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: AppColors.goldDark,
+                    letterSpacing: 1.4,
+                  ),
+                ),
+              ),
+              Text(
+                '$completedCount / 5 completed',
+                style: context.textTheme.labelMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(mystery, style: context.textTheme.titleLarge),
+          if (intention.trim().isNotEmpty) ...<Widget>[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              intention,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          DecadeDots(completedCount: completedCount),
+        ],
+      ),
+    );
+  }
+}
+
+/// After the day has passed: a warm, guilt-free invitation to finish the
+/// remaining decades. Never blames the student for missed breaks.
+class _CatchUpCard extends StatelessWidget {
+  const _CatchUpCard({
+    required this.remaining,
+    required this.breaks,
+    required this.onCompleteDecade,
+  });
+
+  final int remaining;
+  final List<RosaryBreak> breaks;
+  final ValueChanged<int> onCompleteDecade;
+
+  @override
+  Widget build(BuildContext context) {
+    final incomplete = breaks.where((b) => !b.prayerCompleted).toList();
+
+    return AppCard(
+      color: AppColors.goldSoft.withValues(alpha: 0.15),
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'STILL TIME TO PRAY',
+            style: context.textTheme.labelSmall?.copyWith(
+              color: AppColors.goldDark,
+              letterSpacing: 1.4,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'The remaining $remaining decade${remaining == 1 ? '' : 's'} '
+            'can still be prayed today.',
+            style: context.textTheme.titleLarge,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Your Rosary is still yours — pick any decade whenever '
+            'you\'re ready.',
+            style: context.textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          if (incomplete.isNotEmpty) ...<Widget>[
+            const SizedBox(height: AppSpacing.lg),
+            for (final br in incomplete) ...<Widget>[
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => onCompleteDecade(br.decadeNumber),
+                  icon: const Icon(Icons.self_improvement),
+                  label: Text('Pray ${ordinal(br.decadeNumber)} decade · '
+                      '${formatHourMinute(br.startTime.hour, br.startTime.minute)}'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Closing line of the Today screen: the promise of the campaign.
+class _JourneyFooter extends StatelessWidget {
+  const _JourneyFooter();
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      children: <Widget>[
+        Text(
+          '5 breaks · 1 Rosary · everyday',
+          textAlign: TextAlign.center,
+          style: context.textTheme.labelLarge?.copyWith(
+            color: AppColors.marianBlue,
+            letterSpacing: 0.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          'Your Rosary journey is complete for today. See you tomorrow.',
+          textAlign: TextAlign.center,
+          style: context.textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// "Your five breaks" heading reflecting the day phase.
+class _TodayHeading extends StatelessWidget {
+  const _TodayHeading({required this.completedCount, required this.state});
+
+  final int completedCount;
+  final BreakDayState? state;
+
+  @override
+  Widget build(BuildContext context) {
+    final subtitle = switch (state?.phase) {
+      BreakDayPhase.dayComplete =>
+        'You prayed all five decades. Come back tomorrow.',
+      BreakDayPhase.breakIsActive =>
+        'A break is happening now — a few minutes is all it takes.',
+      BreakDayPhase.breakEnded =>
+        'That break has passed, but you can still pray anytime.',
+      BreakDayPhase.nextBreak || BreakDayPhase.beforeFirstBreak =>
+        'One decade per break — five breaks, one Rosary.',
+      null => 'One decade per break — five breaks, one Rosary.',
+    };
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title, style: context.textTheme.titleLarge),
+        Text('Your five breaks', style: context.textTheme.titleLarge),
         const SizedBox(height: 4),
         Text(
           subtitle,
-          style: context.textTheme.bodySmall?.copyWith(color: AppColors.inkSoft),
+          style: context.textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

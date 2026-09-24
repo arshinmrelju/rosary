@@ -10,14 +10,25 @@ class FirestoreDailyContentRepository implements DailyContentRepository {
 
   final FirebaseFirestore _firestore;
 
+  /// Student-facing read: only published content is ever returned.
+  ///
+  /// The security rules already forbid students from reading drafts; this
+  /// also treats `permission-denied` (a draft guarded by the rules) the same
+  /// as "nothing published today", so the app degrades gracefully.
   @override
   Future<DailyContent?> fetch(DateTime date) async {
-    final snapshot = await _firestore
-        .collection(FirestorePaths.dailyContent)
-        .doc(dateKey(date))
-        .get();
-    if (!snapshot.exists) return null;
-    return DailyContent.fromMap(snapshot.data()!);
+    try {
+      final snapshot = await _firestore
+          .collection(FirestorePaths.dailyContent)
+          .doc(dateKey(date))
+          .get();
+      if (!snapshot.exists) return null;
+      final content = DailyContent.fromMap(snapshot.data()!);
+      return content.published ? content : null;
+    } on FirebaseException catch (e) {
+      if (e.code == 'permission-denied') return null;
+      rethrow;
+    }
   }
 
   @override

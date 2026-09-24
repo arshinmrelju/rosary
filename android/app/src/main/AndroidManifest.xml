@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Reminder scheduling + resume support for flutter_local_notifications.
+         Scheduling is intentionally inexact (no SCHEDULE_EXACT_ALARM needed). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:label="rosary_break"
         android:name="${applicationName}"

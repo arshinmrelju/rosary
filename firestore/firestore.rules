@@ -2,52 +2,250 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Admin flag: set a custom claim `admin=true` for staff accounts.
-    function isAdmin() {
-      return request.auth != null && request.auth.token.admin == true;
+    // ---------- Role helpers ----------
+    // The administrator directory is `admins/{uid}` with `{ role: <key> }`.
+    // Rules re-read the document on EVERY request — the client never
+    // self-asserts a role, so a revoked admin loses access immediately.
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // ---------- App users ----------
-    // users/{userId}
+    function getRole() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid))
+        .data.role;
+    }
+
+    function isAdminUser() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists
+        && getRole() in ['superadmin', 'content', 'moderator'];
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists
+        && getRole() == 'superadmin';
+    }
+
+    // Content team may create/edit/publish daily content and drafts.
+    function canEditContent() {
+      return isAdminUser() && getRole() in ['superadmin', 'content'];
+    }
+
+    // Moderators approve/reject/hide intentions and review reports.
+    function canModerate() {
+      return isAdminUser() && getRole() in ['superadmin', 'moderator'];
+    }
+
+    // ---------- users: private by owner ----------
     match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // ---------- Daily content (read-only for students) ----------
-    // dailyContent/{date}
+    // ---------- admins: role directory ----------
+    // Super Admins manage the directory; any admin can read their own doc.
+    match /admins/{uid} {
+      allow read: if isSignedIn() && uid == request.auth.uid;
+      allow read: if isSuperAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    // ---------- Daily content ----------
+    // Students only ever see PUBLISHED content. Drafts and admin reads are
+    // restricted to the content team. Deletion is a Super Admin action.
     match /dailyContent/{date} {
-      allow read: if true;
-      // Publishing handled by admin clients / Cloud Functions.
-      allow write: if isAdmin();
+      allow read: if canEditContent()
+        || (isSignedIn() && resource.data.published == true)
+        || resource.data.published == true;
+      allow create, update: if canEditContent()
+        && resource.data.date == date
+        && request.resource.data.published is bool
+        && request.resource.data.mysteryType is string;
+      allow delete: if isSuperAdmin();
     }
 
     // ---------- Per-user participation ----------
-    // participation/{userId}/days/{date}
+    // participation/{userId}/days/{date} is the source of truth for how many
+    // decades a user actually completed. Only the owner may read/write it.
     match /participation/{userId}/days/{date} {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // ---------- Prayer intentions ----------
+    // ---------- Prayer intentions (user-generated content) ----------
     // prayerIntentions/{intentionId}
     match /prayerIntentions/{intentionId} {
-      allow read: if request.auth != null;
-      // Students create pending intentions (admin sets approved=true later).
-      allow create: if request.auth != null;
-      // Students may only increment prayerCount; moderation is admin-only.
-      allow update: if isAdmin() || (
-        request.auth != null
+      // Students may only read APPROVED intentions. Pending records stay
+      // invisible until an admin publishes them; admins see everything.
+      allow read: if isAdminUser()
+        || (isSignedIn() && resource.data.approved == true)
+        || resource.data.approved == true;
+
+      // New submissions are ALWAYS pending: `approved` must be false, the
+      // text is bounded, students can only create in their own name and can
+      // never self-publish, seed a counter, or smuggle extra fields in.
+      allow create: if isSignedIn()
+        && request.resource.data.approved == false
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.prayerCount == 0
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 3
+        && request.resource.data.text.size() <= 280
+        && request.resource.data.keys().hasOnly(
+             ['text', 'userId', 'anonymous', 'createdAt', 'prayerCount', 'approved']
+           );
+
+      // Students may only bump prayerCount by exactly one (guarded, monotonic)
+      // for the "I prayed for this" flow; every other change is admin-only
+      // (moderators approve, hide, edit; Super Admins may delete).
+      allow update: if isAdminUser() || (
+        isSignedIn()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['prayerCount'])
+        && request.resource.data.prayerCount == resource.data.prayerCount + 1
       );
-      allow delete: if isAdmin();
+
+      // Rejecting a pending intention removes the doc, so moderation needs
+      // delete; permanent deletion is a Super Admin action.
+      allow delete: if canModerate() || isSuperAdmin();
     }
 
-    // ---------- Daily stats ----------
-    // stats/{date} — maintained by a scheduled Cloud Function.
+    // Per-user "I prayed for this" markers. A user can create exactly one
+    // marker per intention (their own) — read/write otherwise admin-only so
+    // the intent behind "who prayed" is never exposed or spoofed.
+    match /prayerIntentions/{intentionId}/prayers/{userId} {
+      allow read: if isAdminUser() || (isSignedIn() && userId == request.auth.uid);
+      allow create: if isSignedIn() && userId == request.auth.uid;
+      allow update, delete: if isAdminUser();
+    }
+
+    // Per-user submission throttle docs (spam control). Own-user only.
+    match /intentionSubmissions/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow write: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // ---------- Prayer reports ----------
+    // Students file reports (status forced to pending); moderators review,
+    // dismiss and delete. The reporter can always read their own report.
+    match /reports/{reportId} {
+      allow read: if isSignedIn()
+        && (canModerate()
+          || (resource.data.reporterUserId is string
+              && resource.data.reporterUserId == request.auth.uid));
+      allow create: if isSignedIn()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.reporterUserId == request.auth.uid
+        && request.resource.data.intentionId is string
+        && request.resource.data.intentionId.size() > 0
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() <= 80;
+      allow update, delete: if canModerate();
+    }
+
+    // ---------- Settings ----------
+    // Public read; Super Admin write only.
+    match /settings/{setting} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    // ---------- Announcements ----------
+    // Students read them (client shows the active one); Super Admins manage.
+    match /announcements/{announcementId} {
+      allow read: if true;
+      allow create, update: if isSuperAdmin();
+      allow delete: if isSuperAdmin();
+    }
+
+    // ---------- Admin audit trail ----------
+    // Any admin may append (recording their own actions); only Super Admins
+    // may read the trail (e.g. to review who did what).
+    match /adminLogs/{logId} {
+      allow read: if isSuperAdmin();
+      allow create: if isSignedIn() && isAdminUser()
+        && request.resource.data.adminUserId == request.auth.uid
+        && request.resource.data.action is string
+        && request.resource.data.target is string;
+      allow delete: if isSuperAdmin();
+    }
+
+    // ---------- Daily community stats ----------
+    // stats/{date} aggregates decades + participants + intentions + prayers.
+    // Reads are public (aggregates only — no identities). Writes are admin
+    // OR constrained client increments from the guarded participation
+    // transaction. Rules enforce monotonicity and forbid touching the date
+    // key, so a document can never be reset or rewritten arbitrarily.
+    //
+    // NOTE: full anti-fraud enforcement (e.g. verifying each increment
+    // against a function) belongs to the Cloud Function stage; these rules
+    // keep the surface honest for ordinary use without opening writes.
     match /stats/{date} {
       allow read: if true;
-      allow write: if isAdmin();
+
+      allow create: if isAdminUser() || (
+        isSignedIn()
+        && request.resource.data.date == date
+        && request.resource.data.totalDecades >= 0
+        && request.resource.data.totalParticipants >= 0
+        && request.resource.data.totalIntentions >= 0
+        && request.resource.data.totalPrayers >= 0
+      );
+
+      allow update: if isAdminUser() || (
+        isSignedIn()
+        && request.resource.data.date == resource.data.date
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+             ['date', 'totalDecades', 'totalParticipants', 'totalIntentions', 'totalPrayers']
+           )
+        && request.resource.data.totalDecades >= resource.data.totalDecades
+        && request.resource.data.totalParticipants >= resource.data.totalParticipants
+        && request.resource.data.totalIntentions >= resource.data.totalIntentions
+        && request.resource.data.totalPrayers >= resource.data.totalPrayers
+      );
+
+      allow delete: if isSuperAdmin();
+    }
+
+    // ---------- Monthly community stats ----------
+    // monthlyStats/{yyyy-MM} aggregates for the calendar month.
+    match /monthlyStats/{month} {
+      allow read: if true;
+
+      allow create: if isAdminUser() || (
+        isSignedIn()
+        && request.resource.data.date == month
+        && request.resource.data.totalDecades >= 0
+        && request.resource.data.totalParticipants >= 0
+        && request.resource.data.totalIntentions >= 0
+        && request.resource.data.totalPrayers >= 0
+      );
+
+      allow update: if isAdminUser() || (
+        isSignedIn()
+        && request.resource.data.date == resource.data.date
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(
+             ['date', 'totalDecades', 'totalParticipants', 'totalIntentions', 'totalPrayers']
+           )
+        && request.resource.data.totalDecades >= resource.data.totalDecades
+        && request.resource.data.totalParticipants >= resource.data.totalParticipants
+        && request.resource.data.totalIntentions >= resource.data.totalIntentions
+        && request.resource.data.totalPrayers >= resource.data.totalPrayers
+      );
+
+      allow delete: if isSuperAdmin();
+    }
+
+    // One marker per user per month (first participation). Students create
+    // their own exactly once; deletion/re-creation (which would inflate the
+    // participant counter) is admin-only.
+    match /monthlyStats/{month}/participants/{userId} {
+      allow read: if isAdminUser();
+      allow create: if isSignedIn()
+        && userId == request.auth.uid
+        && request.resource.data.month == month
+        && request.resource.data.keys().hasOnly(['month', 'createdAt']);
+      allow update, delete: if isSuperAdmin();
     }
   }
 }

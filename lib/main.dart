@@ -23,5 +23,24 @@ Future<void> main() async {
 
   final dependencies = await AppDependencies.create();
 
+  // Start local reminders (no-ops on platforms without them) and restore the
+  // day's schedule from the persisted preferences. Rescheduling is idempotent:
+  // applySettings cancels and rebuilds, so this is safe on every launch.
+  try {
+    await dependencies.notificationService.initialize();
+    final schedule = await dependencies.breakScheduleSource.load();
+    await dependencies.notificationService.applySettings(
+      schedule,
+      dependencies.notificationSettingsStore.settings,
+    );
+  } catch (e) {
+    // Reminders are an invitation, never a blocker — a scheduling failure at
+    // startup must not prevent the app from launching.
+    debugPrint('[RosaryBreak] Reminder setup skipped: $e');
+  }
+
+  // Resolve any existing admin session so /admin is ready immediately.
+  await dependencies.adminSession.restore();
+
   runApp(RosaryBreakApp(dependencies: dependencies));
 }

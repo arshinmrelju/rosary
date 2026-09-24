@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/router/app_routes.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../domain/models/day_stats.dart';
 
-/// Community participation summary from the daily stats.
+/// Compact "the campus prays together" card on Home.
+///
+/// Deliberately small — Prayer remains the primary action on Home; this is a
+/// quiet link into the community, not the centrepiece.
 class CommunityCard extends StatelessWidget {
   const CommunityCard({super.key, required this.stats});
 
@@ -13,67 +21,64 @@ class CommunityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final participants = stats?.totalParticipants ?? 0;
     final decades = stats?.totalDecades ?? 0;
 
     return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
       child: Row(
         children: <Widget>[
           Expanded(
-            child: _Metric(
-              icon: Icons.groups_outlined,
-              value: '$participants',
-              label: 'Students',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '🌹 ${AppConstants.campusShortName} PRAYS TOGETHER',
+                  style: context.textTheme.labelSmall?.copyWith(
+                    color: AppColors.marianBlue,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                if (decades == 0)
+                  Text(
+                    'Be the first to pray today.',
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.inkSoft,
+                    ),
+                  )
+                else
+                  Text.rich(
+                    TextSpan(
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: formatThousands(decades),
+                          style: context.textTheme.headlineSmall?.copyWith(
+                            color: AppColors.goldDark,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' decades\nprayed today.',
+                          style: context.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.inkSoft,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: const Color(0xFFE9EDF4),
-          ),
-          Expanded(
-            child: _Metric(
-              icon: Icons.self_improvement_outlined,
-              value: '$decades',
-              label: 'Decades prayed',
+          const SizedBox(width: AppSpacing.md),
+          OutlinedButton(
+            onPressed: () => context.go(AppRoutes.intention),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(140, 52),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
             ),
+            child: const Text('View Prayer Wall'),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _Metric extends StatelessWidget {
-  const _Metric({required this.icon, required this.value, required this.label});
-
-  final IconData icon;
-  final String value;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 6),
-            Text(value, style: context.textTheme.titleLarge),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: context.textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
     );
   }
 }
