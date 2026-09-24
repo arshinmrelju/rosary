@@ -8,7 +8,6 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/decade_dots.dart';
-import '../../../../domain/models/break_slot.dart';
 import '../../../../domain/models/daily_content.dart';
 import '../../../../domain/schedule/break_day_state.dart';
 
@@ -244,12 +243,6 @@ class _CardView {
   }
 
   static String _decade(int? n) => n == null ? '' : ordinal(n);
-
-  static String? _window(BreakSlot? slot) {
-    if (slot == null) return null;
-    final minutes = slot.activeWindow.inMinutes;
-    return '$minutes minute${minutes == 1 ? '' : 's'}';
-  }
 }
 
 /// Renders the status copy and, when a countdown is due, the live timer.

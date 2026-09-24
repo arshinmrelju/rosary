@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 
 /// Brand header with the official BEAD5 logo lockup and today's date.
@@ -155,7 +155,7 @@ class _FiveBeadsMiniMotif extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: (isMiddle ? AppColors.gold : AppColors.marianBlue)
-                            .withOpacity(0.35),
+                            .withValues(alpha: 0.35),
                         blurRadius: 3,
                       ),
                     ],
@@ -165,7 +165,7 @@ class _FiveBeadsMiniMotif extends StatelessWidget {
                   Container(
                     width: 5,
                     height: 1.5,
-                    color: AppColors.marianBlue.withOpacity(0.3),
+                    color: AppColors.marianBlue.withValues(alpha: 0.3),
                   ),
               ],
             );
