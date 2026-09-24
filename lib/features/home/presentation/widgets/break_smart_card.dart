@@ -8,6 +8,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/decade_dots.dart';
+import '../../../../domain/models/break_slot.dart';
 import '../../../../domain/models/daily_content.dart';
 import '../../../../domain/schedule/break_day_state.dart';
 
@@ -104,11 +105,9 @@ class _Body extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'YOUR JOURNEY: ${dayState.completedCount} / 5 Moments',
+                '${dayState.completedCount} / 5 Decades',
                 style: context.textTheme.labelMedium?.copyWith(
                   color: const Color(0xFFDDE6F8),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.8,
                 ),
               ),
             ],
@@ -177,20 +176,20 @@ class _CardView {
   }) {
     if (state.allCompleted) {
       return const _CardView(
-        overline: 'JOURNEY COMPLETE',
-        label: 'You completed the five moments.',
-        sublabel: 'Five decades. One Rosary. One journey of prayer.\n'
-            'BEAD5 — Five Moments. One Journey.',
+        overline: '🌹 ROSARY COMPLETE',
+        label: 'You completed 5 / 5 decades today.',
+        sublabel: 'Five breaks. Five decades. One Rosary — thank you for '
+            'taking these moments throughout your day.',
       );
     }
 
     if (dayEnded) {
       final count = state.completedCount;
       return _CardView(
-        overline: 'YOUR JOURNEY',
-        label: '$count / 5 Moments',
-        sublabel: 'You prayed $count decade${count == 1 ? '' : 's'} today. '
-            'Give God five moments within your day.',
+        overline: "TODAY'S ROSARY",
+        label: '$count / 5 decades',
+        sublabel: 'You prayed $count decade${count == 1 ? '' : 's'} today. The '
+            'remaining decades can still be prayed later.',
         showPrayButton: state.nextToPray != null,
         actionLabel: 'PRAY REMAINING',
         actionIcon: Icons.self_improvement,
@@ -202,11 +201,10 @@ class _CardView {
     switch (state.phase) {
       case BreakDayPhase.breakIsActive:
         final active = state.activeBreak ?? target;
-        final num = active?.decadeNumber ?? 1;
         return _CardView(
-          overline: 'NOW • MOMENT 0$num',
-          label: 'Pray the ${_decade(num)} Decade',
-          sublabel: 'Take a moment. Pray together.',
+          overline: '📿 ROSARY BREAK NOW',
+          label: '${_decade(active?.decadeNumber)} Decade',
+          sublabel: 'Take ${_window(active) ?? '3 minutes'}.',
           showPrayButton: true,
           actionLabel: 'PRAY NOW',
           actionIcon: Icons.self_improvement,
@@ -214,13 +212,13 @@ class _CardView {
         );
       case BreakDayPhase.breakEnded:
         final ended = state.justEndedBreak ?? target;
-        final num = ended?.decadeNumber ?? 1;
         return _CardView(
-          overline: 'MOMENT 0$num • PAUSE & PRAY',
-          label: 'Pray the ${_decade(num)} Decade',
-          sublabel: 'Pause. Pray. Continue the journey.',
+          overline: 'STILL TIME TO PRAY',
+          label: '${_decade(ended?.decadeNumber)} Decade',
+          sublabel: 'Break ended. You can still pray this decade whenever '
+              'you\'re ready.',
           showPrayButton: true,
-          actionLabel: 'PRAY ${_decade(num).toUpperCase()} DECADE',
+          actionLabel: 'PRAY ${_decade(ended?.decadeNumber)} DECADE',
           actionIcon: Icons.schedule,
           prayDecade: ended?.decadeNumber,
         );
@@ -228,21 +226,26 @@ class _CardView {
       case BreakDayPhase.beforeFirstBreak:
       case BreakDayPhase.dayComplete:
         final upcoming = state.nextUpcomingBreak ?? state.nextToPray;
-        final num = upcoming?.decadeNumber ?? 1;
         return _CardView(
-          overline: 'NEXT • MOMENT 0$num',
+          overline: 'NEXT ROSARY BREAK',
           label: upcoming == null
               ? 'Check back shortly'
-              : 'Pray the ${_decade(num)} Decade · ${upcoming.time.label}',
+              : '${_decade(upcoming.decadeNumber)} Decade · ${upcoming.time.label}',
           sublabel: dayEnded
-              ? 'The college day has wrapped. Moments remain open for you.'
-              : 'Pause. Pray. Continue the journey.',
+              ? 'The college day has wrapped. Decades stay open for you.'
+              : 'Your prayer takes just a few quiet minutes.',
           countdownTarget: upcoming?.on(now),
         );
     }
   }
 
   static String _decade(int? n) => n == null ? '' : ordinal(n);
+
+  static String? _window(BreakSlot? slot) {
+    if (slot == null) return null;
+    final minutes = slot.activeWindow.inMinutes;
+    return '$minutes minute${minutes == 1 ? '' : 's'}';
+  }
 }
 
 /// Renders the status copy and, when a countdown is due, the live timer.

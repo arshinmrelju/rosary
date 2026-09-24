@@ -22,6 +22,9 @@ abstract final class AppConstants {
   /// Campaign organizer.
   static const String organizer = 'Jesus Youth — Pazhassiraja College';
 
+  /// Jesus Youth logo asset (SVG).
+  static const String jesusYouthLogo = 'assets/yellow svg.svg';
+
   /// Short campus identifier.
   static const String campusShortName = 'JY PRC';
 

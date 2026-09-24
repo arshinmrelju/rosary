@@ -639,3 +639,33 @@ function renderJourneyTimeline() {
     if (scriptureEl) scriptureEl.textContent = `${decadeData.verse} • Fruit: ${decadeData.fruit}`;
   });
 }
+
+// Mobile Navigation Toggle
+function toggleMobileMenu() {
+  const drawer = document.getElementById('mobile-nav-drawer');
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  if (!drawer || !toggleBtn) return;
+  const isOpen = drawer.classList.contains('open');
+  if (isOpen) {
+    drawer.classList.remove('open');
+    toggleBtn.classList.remove('active');
+  } else {
+    drawer.classList.add('open');
+    toggleBtn.classList.add('active');
+  }
+}
+
+function closeMobileMenu() {
+  const drawer = document.getElementById('mobile-nav-drawer');
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  if (drawer) drawer.classList.remove('open');
+  if (toggleBtn) toggleBtn.classList.remove('active');
+}
+
+// Close mobile drawer when clicking outside navbar
+document.addEventListener('click', (e) => {
+  const navbar = document.getElementById('main-navbar');
+  if (navbar && !navbar.contains(e.target)) {
+    closeMobileMenu();
+  }
+});

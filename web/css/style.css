@@ -376,6 +376,122 @@ button {
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 125, 91, 0); }
 }
 
+/* Mobile Toggle & Mobile Nav Drawer */
+.mobile-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1.5px solid var(--border-light);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mobile-toggle:hover {
+  background: var(--primary-blue-soft);
+  border-color: var(--primary-blue-tint);
+}
+
+.mobile-toggle .bar {
+  width: 17px;
+  height: 2px;
+  background-color: var(--primary-blue);
+  border-radius: 2px;
+  transition: all 0.25s ease;
+}
+
+.mobile-toggle.active .bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.mobile-toggle.active .bar:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-4px);
+}
+
+.mobile-toggle.active .bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.mobile-nav-drawer {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(250, 247, 240, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: 0 16px 32px rgba(28, 61, 138, 0.12);
+  padding: 14px 18px 20px;
+  z-index: 999;
+}
+
+.mobile-nav-drawer.open {
+  display: block;
+  animation: navDrawerSlide 0.22s ease-out forwards;
+}
+
+@keyframes navDrawerSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-nav-item {
+  display: block;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--deep-navy);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.mobile-nav-item:hover, .mobile-nav-item.active {
+  background: var(--primary-blue-soft);
+  color: var(--primary-blue);
+  font-weight: 700;
+}
+
+.mobile-drawer-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(28, 61, 138, 0.08);
+  text-align: center;
+}
+
+.mobile-drawer-footer .drawer-org {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -2003,12 +2119,69 @@ button {
 }
 
 @media (max-width: 768px) {
+  .nav-container {
+    height: 62px;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .brand-lockup {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .brand-wordmark {
+    font-size: 1.55rem;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-wordmark .num-5::after {
+    width: 5px;
+    height: 5px;
+    right: -6px;
+    top: 3px;
+  }
+
+  /* Hide the cramped 2-line tagline & college subtext in the header on mobile */
+  .brand-meta {
+    display: none !important;
+  }
+
   .nav-links {
     display: none;
   }
+
   .mobile-toggle {
     display: flex;
   }
+
+  .nav-actions {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .live-pill {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+
+  .live-indicator {
+    width: 7px;
+    height: 7px;
+  }
+
+  .btn-primary.nav-pray-btn {
+    padding: 7px 14px;
+    font-size: 0.82rem;
+    gap: 6px;
+  }
+
+  .btn-primary.nav-pray-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .hero-title {
     font-size: 3.2rem;
   }
@@ -2031,5 +2204,57 @@ button {
   }
   .studio-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 12px;
+    gap: 6px;
+  }
+
+  .brand-wordmark {
+    font-size: 1.38rem;
+  }
+
+  .live-pill {
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    gap: 5px;
+  }
+
+  .btn-primary.nav-pray-btn {
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    gap: 5px;
+  }
+
+  .mobile-toggle {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-container {
+    padding: 0 8px;
+    gap: 4px;
+  }
+
+  .brand-wordmark {
+    font-size: 1.28rem;
+  }
+
+  .live-pill {
+    display: none;
+  }
+
+  .btn-primary.nav-pray-btn {
+    padding: 6px 9px;
+    font-size: 0.75rem;
+  }
+
+  .btn-primary.nav-pray-btn svg {
+    display: none;
   }
 }

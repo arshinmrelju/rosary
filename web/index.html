@@ -55,7 +55,7 @@
   <!-- ==========================================
        MAIN NAVIGATION
        ========================================== -->
-  <header class="navbar">
+  <header class="navbar" id="main-navbar">
     <div class="container nav-container">
       <a href="#" class="brand-lockup">
         <div class="brand-wordmark">
@@ -80,10 +80,29 @@
           <span class="live-indicator"></span>
           <span id="nav-live-text">Moment 1 of 5</span>
         </div>
-        <button class="btn-primary" onclick="openDecadePrayerModal(1)">
+        <button class="btn-primary nav-pray-btn" onclick="openDecadePrayerModal(1)">
           <span>Pray Now</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
+        <button class="mobile-toggle" id="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle navigation menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <ul class="mobile-nav-links">
+        <li><a href="#hero" class="mobile-nav-item active" onclick="closeMobileMenu()">Home</a></li>
+        <li><a href="#live-engine" class="mobile-nav-item" onclick="closeMobileMenu()">Live Moment</a></li>
+        <li><a href="#journey-timeline" class="mobile-nav-item" onclick="closeMobileMenu()">The 5 Moments</a></li>
+        <li><a href="#campaign-studio" class="mobile-nav-item" onclick="closeMobileMenu()">Asset Studio</a></li>
+        <li><a href="#brand-book" class="mobile-nav-item" onclick="closeMobileMenu()">Brand Book</a></li>
+      </ul>
+      <div class="mobile-drawer-footer">
+        <span class="drawer-org">Jesus Youth • Pazhassiraja College</span>
       </div>
     </div>
   </header>
